@@ -1,4 +1,4 @@
-private void btnExportPdf_Click(object sender, EventArgs e)
+public void ExportTiPdfAllExam()
 {
     if (grdvExam.Rows.Count > 0)
     {
@@ -15,15 +15,22 @@ private void btnExportPdf_Click(object sender, EventArgs e)
                     Document pdfDoc = new Document(PageSize.A4.Rotate(), 10f, 20f, 20f, 10f);  // Set page orientation to horizontal
                     PdfWriter.GetInstance(pdfDoc, stream);
                     pdfDoc.Open();
+                    // Add title above the table
+                    iTextSharp.text.Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+                    iTextSharp.text.Paragraph title = new iTextSharp.text.Paragraph("External Exam Details", titleFont);
+                    title.Alignment = Element.ALIGN_CENTER; // Assuming Element.ALIGN_CENTER is defined elsewhere in your code
+                    pdfDoc.Add(title);
 
-                    PdfPTable pdfTable = new PdfPTable(9);  // Specify the number of columns you want
+                    // Add a blank line
+                    pdfDoc.Add(new iTextSharp.text.Paragraph("\n")); // Add an empty paragraph with a newline character
+                    PdfPTable pdfTable = new PdfPTable(6);  // Specify the number of columns you want
 
                     pdfTable.DefaultCell.Padding = 3;
                     pdfTable.WidthPercentage = 100;
                     pdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
 
-                    // Add specific columns to the PDF table
-                    List<string> columnsToExport = new List<string> { "SerialNumber", "SkillName", "FullName", "TestName", "StaffName", "LabName", "TestDate", "TestTime", "TotalMarks" };
+                    // Add specific columns to the PDF table SerialNumber,SkillName,TestName,RegisterDate,TotalMarks,Duration
+                    List<string> columnsToExport = new List<string> { "SerialNumber", "SkillName", "TestName", "RegisterDate", "TotalMarks", "Duration" };
 
                     foreach (string columnName in columnsToExport)
                     {
@@ -76,6 +83,7 @@ private void btnExportPdf_Click(object sender, EventArgs e)
                     stream.Close();
 
                     MessageBox.Show("External Mock Data Exported Successfully !!!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // System.Diagnostics.Process.Start(sfd.FileName); // Uncomment this line if you want to open the saved PDF automatically
                 }
             }
             catch (Exception ex)
@@ -88,5 +96,4 @@ private void btnExportPdf_Click(object sender, EventArgs e)
     {
         MessageBox.Show("No Record To Export !!!", "Info");
     }
-
 }
